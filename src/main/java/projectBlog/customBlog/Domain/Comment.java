@@ -1,5 +1,6 @@
 package projectBlog.customBlog.Domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class Comment {
     private Article article;
 
     @OneToMany(mappedBy = "parent")
-    private List<Comment> childs;
+    private List<Comment> childs = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="parent_id")
@@ -47,6 +48,23 @@ public class Comment {
 
     public static Comment makeChildComment(String content) {
         return new Comment(content, Status.Child);
+    }
+
+    public void addChildComment(Comment comment) throws Exception {
+        if(this.status == Status.Parent)  {
+            childs.add(comment);
+            comment.setParentComment(this);
+        } else {
+            throw new Exception();
+        }
+    }
+
+    public void setParentComment(Comment comment) throws Exception {
+        if(this.status == Status.Child) {
+            this.parent = comment;
+        } else {
+            throw new Exception();
+        }
     }
 
     public void setCommentArticle(Article article) {

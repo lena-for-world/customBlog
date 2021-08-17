@@ -1,5 +1,6 @@
 package projectBlog.customBlog.Domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +31,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
-    private List<Category> childs;
+    private List<Category> childs = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name="blog_id")
@@ -47,6 +48,23 @@ public class Category {
 
     public static Category makeChildCategory(String name) {
         return new Category(name, Status.Child);
+    }
+
+    public void addChildCategory(Category category) throws Exception {
+        if(this.status == Status.Parent)  {
+            childs.add(category);
+            category.setParentCategory(this);
+        } else {
+            throw new Exception();
+        }
+    }
+
+    public void setParentCategory(Category category) throws Exception {
+        if(this.status == Status.Child) {
+            this.parent = category;
+        } else {
+            throw new Exception();
+        }
     }
 
     public void editContent(String changedName) {

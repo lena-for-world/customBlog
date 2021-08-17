@@ -131,4 +131,26 @@ public class ArticleCrudTest {
         assertEquals(fiveArticles.size(), 5);
     }
 
+    @Test
+    @DisplayName("게시글 카테고리 이동")
+    public void moveArticle() {
+
+        // given
+        Article arti = em.find(Article.class, article.getId());
+        Category newCategory = Category.makeParentCategory("newCate");
+        assertNotEquals(arti.getCategory().getName(), newCategory.getName());
+
+        // when
+        article.moveArticleCategory(newCategory);
+        //Article findChangedArti = em.find(Article.class, article.getId());
+
+        // then
+        //assertNotEquals(arti.getCategory().getName(), newCategory.getName());
+        // 업데이트된 article을 다시 땡겨오지 않아도 바뀐 정보가 반영되고 있는데,
+        // article이 더티 체킹 되면
+        // lazy loading이었던 엔티티의 멤버 엔티티에 접근하는 경우 다시 땡겨오는 건가?
+        assertEquals(newCategory, article.getCategory());
+
+    }
+
 }

@@ -2,6 +2,7 @@ package projectBlog.customBlog.CrudTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -100,6 +101,50 @@ public class CategoryTest {
         assertNotEquals(editCategoryName, name);
         assertEquals(editCategoryName, tempCategory.getName());
 
+    }
+
+    @Test
+    @DisplayName("부모 카테고리에 부모 카테고리 생성 불가")
+    public void noParentforParent() {
+        // category == 부모 카테고리
+        save(category);
+        Category newParent = Category.makeParentCategory("newParent");
+        try {
+            category.addChildCategory(newParent);
+            fail();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @DisplayName("자식 카테고리 아래에 부모 카테고리 생성 불가")
+    public void childHasNoChild() {
+        // category == 부모 카테고리
+        // given
+        save(category);
+        Category newChild = Category.makeChildCategory("newChild");
+        try {
+            // when
+            newChild.addChildCategory(category);
+            fail();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    @DisplayName("부모 카테고리 아래에 자식 카테고리 생성")
+    public void parentCategoryHasChildCategory() {
+        save(category);
+        Category newChild = Category.makeChildCategory("newChild");
+        try {
+            category.addChildCategory(newChild);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        assertEquals(category.getChilds().get(0), newChild);
+        assertEquals(category.getChilds().get(0).getName(), newChild.getName());
     }
 
 }
