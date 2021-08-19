@@ -2,7 +2,7 @@ package projectBlog.customBlog.CrudTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import projectBlog.customBlog.Domain.Article;
+import projectBlog.customBlog.domain.Article;
 
 public class TempDb {
 

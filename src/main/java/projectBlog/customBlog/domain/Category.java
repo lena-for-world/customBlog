@@ -1,4 +1,4 @@
-package projectBlog.customBlog.Domain;
+package projectBlog.customBlog.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +33,10 @@ public class Category {
     @OneToMany(mappedBy = "parent")
     private List<Category> childs = new ArrayList<>();
 
+    // category에서 가지고 있는 글들에 접근
+    @OneToMany(mappedBy = "category")
+    private List<Article> articles = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name="blog_id")
     private Blog blog;
@@ -42,8 +46,11 @@ public class Category {
         this.status = status;
     }
 
-    public static Category makeParentCategory(String name) {
-        return new Category(name, Status.Parent);
+    public static Category makeParentCategory(String name, Blog blog) {
+        Category category = new Category(name, Status.Parent);
+        category.addBlog(blog);
+        blog.addCategory(category);
+        return category;
     }
 
     public static Category makeChildCategory(String name) {
@@ -69,5 +76,14 @@ public class Category {
 
     public void editContent(String changedName) {
         name = changedName;
+    }
+
+    // 연관관계 메서드
+    public void addArticle(Article article) {
+        this.articles.add(article);
+    }
+
+    public void addBlog(Blog blog) {
+        this.blog = blog;
     }
 }

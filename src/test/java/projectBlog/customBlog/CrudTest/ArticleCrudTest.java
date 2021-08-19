@@ -3,7 +3,6 @@ package projectBlog.customBlog.CrudTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,9 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import projectBlog.customBlog.Domain.Article;
-import projectBlog.customBlog.Domain.Category;
-import projectBlog.customBlog.Domain.Member;
+import projectBlog.customBlog.domain.Article;
+import projectBlog.customBlog.domain.Blog;
+import projectBlog.customBlog.domain.Category;
+import projectBlog.customBlog.domain.Comment;
+import projectBlog.customBlog.domain.Member;
 
 @SpringBootTest
 @Transactional
@@ -25,6 +26,7 @@ public class ArticleCrudTest {
     String title, content;
     Member member;
     Category category;
+    Blog blog;
 
     public void save(Object object) {
         em.persist(object);
@@ -39,8 +41,10 @@ public class ArticleCrudTest {
         title = "black widow";
         content = "content";
         member = new Member();
-        category = Category.makeParentCategory("category");
+        blog = Blog.makeBlog("asdf", member);
+        category = Category.makeParentCategory("category", blog);
         article = Article.makeArticle(title, content, LocalDateTime.now(), member, category);
+        save(blog);
         save(category);
         save(member);
         save(article);
@@ -104,9 +108,10 @@ public class ArticleCrudTest {
     }
 
     @Test
-    @DisplayName("게시글 5개씩 조회")
+    @DisplayName("최신 순 게시글 5개씩 조회")
     public void findFiveArticles() {
         // when ( total 6 articles )
+        Member member2 = Member.makeMember("asdf", "asdfasfd");
         for(int i = 2; i < 7; i++) {
             title = "" + i;
             content = "게시글 " + i;
@@ -119,7 +124,8 @@ public class ArticleCrudTest {
 
         List<Article> fiveArticles = em.createQuery("select a from Article a" +
             " join fetch a.member m" +
-            " join fetch a.category c", Article.class)
+            " join fetch a.category c" +
+            " order by a.id desc", Article.class)
             .setFirstResult(0)
             .setMaxResults(5)
             .getResultList();
@@ -137,18 +143,13 @@ public class ArticleCrudTest {
 
         // given
         Article arti = em.find(Article.class, article.getId());
-        Category newCategory = Category.makeParentCategory("newCate");
+        Category newCategory = Category.makeParentCategory("newCate", blog);
         assertNotEquals(arti.getCategory().getName(), newCategory.getName());
 
         // when
         article.moveArticleCategory(newCategory);
-        //Article findChangedArti = em.find(Article.class, article.getId());
 
         // then
-        //assertNotEquals(arti.getCategory().getName(), newCategory.getName());
-        // 업데이트된 article을 다시 땡겨오지 않아도 바뀐 정보가 반영되고 있는데,
-        // article이 더티 체킹 되면
-        // lazy loading이었던 엔티티의 멤버 엔티티에 접근하는 경우 다시 땡겨오는 건가?
         assertEquals(newCategory, article.getCategory());
 
     }

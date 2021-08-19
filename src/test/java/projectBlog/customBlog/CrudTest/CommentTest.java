@@ -5,18 +5,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import projectBlog.customBlog.Domain.Article;
-import projectBlog.customBlog.Domain.Category;
-import projectBlog.customBlog.Domain.Comment;
-import projectBlog.customBlog.Domain.Member;
+import projectBlog.customBlog.domain.Article;
+import projectBlog.customBlog.domain.Blog;
+import projectBlog.customBlog.domain.Category;
+import projectBlog.customBlog.domain.Comment;
+import projectBlog.customBlog.domain.Member;
 
 @DataJpaTest
 @Transactional
@@ -29,6 +28,7 @@ public class CommentTest {
     Category category;
     Article article;
     Comment comment;
+    Blog blog;
 
     public void save(Object object) {
         em.persist(object);
@@ -43,15 +43,17 @@ public class CommentTest {
         title = "black widow";
         content = "content";
         member = new Member();
-        category = Category.makeParentCategory("category");
+        blog = new Blog();
+        category = Category.makeParentCategory("category", blog);
         article = Article.makeArticle(title, content, LocalDateTime.now(), member, category);
+        save(blog);
         save(category);
         save(member);
         save(article);
 
-        comment = Comment.makeParentComment("게시물 1의 댓글!!");
-        article.addCommentToArticle(comment);
-        comment.setCommentArticle(article);
+        comment = Comment.makeParentComment("게시물 1의 댓글!!", article); // article에 댓글 생성
+//        article.addCommentToArticle(comment);
+//        comment.setCommentArticle(article);
         save(comment);
 
 
@@ -78,14 +80,14 @@ public class CommentTest {
         Article article2 = Article.makeArticle(title, content, LocalDateTime.now(), member, category);
         save(article2);
 
-        Comment comment2 = Comment.makeParentComment("게시물 2의 댓글!!2222");
-        article2.addCommentToArticle(comment2);
-        comment2.setCommentArticle(article2);
+        Comment comment2 = Comment.makeParentComment("게시물 2의 댓글!!2222", article2);
+ //       article2.addCommentToArticle(comment2);
+ //       comment2.setCommentArticle(article2);
         save(comment2);
 
-        Comment comment3 = Comment.makeParentComment("게시물 1의 댓글!!3333");
-        article.addCommentToArticle(comment3);
-        comment3.setCommentArticle(article);
+        Comment comment3 = Comment.makeParentComment("게시물 1의 댓글!!3333", article);
+ //       article.addCommentToArticle(comment3);
+ //       comment3.setCommentArticle(article);
         save(comment3);
 
         Comment comment4 = Comment.makeChildComment("게시물 1의 댓글 1의 대댓글!!4444");
@@ -116,7 +118,7 @@ public class CommentTest {
     @Test
     @DisplayName("부모 댓글에 부모 댓글 생성 불가")
     public void noParentforParent() {
-        Comment comment2 = Comment.makeParentComment("부모댓글!!2222");
+        Comment comment2 = Comment.makeParentComment("부모댓글!!2222", article);
         try {
             comment.addChildComment(comment2);
             fail();
@@ -166,6 +168,60 @@ public class CommentTest {
         }
         assertEquals(comment.getChilds().get(0), comment2);
         assertEquals(comment.getChilds().get(0).getContent(), comment2.getContent());
+
+    }
+
+    @Test
+    @DisplayName("글 삭제 시 댓글 삭제")
+    public void whenDeleteArticleThenComment() {
+        List<Comment> comments = em.createQuery("select cm from Comment cm", Comment.class).getResultList();
+        assertEquals(comments.size(), 1);
+        delete(article);
+        comments = em.createQuery("select cm from Comment cm", Comment.class).getResultList();
+        assertEquals(comments.size(), 0);
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 시 댓글만 삭제, 글 삭제 ㄴㄴ")
+    public void whenDeleteCommentThenArticle() {
+
+        // given
+        List<Comment> comments = em.createQuery("select cm from Comment cm", Comment.class).getResultList();
+        assertEquals(comments.size(), 1);
+        List<Article> articles = em.createQuery("select a from Article a", Article.class).getResultList();
+        assertEquals(articles.size(), 1);
+        assertEquals(articles.get(0).getComments().size(), 1);
+
+        // when
+        //deleteComment(comment);
+        article.deleteComment(comment);
+        delete(comment);
+
+        // then
+        comments = em.createQuery("select cm from Comment cm", Comment.class).getResultList();
+        assertEquals(comments.size(), 0);
+        articles = em.createQuery("select a from Article a", Article.class).getResultList();
+        assertEquals(articles.size(), 1);
+        assertEquals(articles.get(0).getComments().size(), 0);
+
+    }
+
+    public void deleteComment(Comment comment) {
+        Article article = comment.getArticle();
+        article.getComments().remove(comment);
+        comment.setCommentArticle(null);
+    }
+
+    @Test
+    @DisplayName("실제 서비스 - 대댓글 달기")
+    public void makechildComment() {
+        Comment child = Comment.makeChildComment("대댓글 내용");
+        try {
+            comment.addChildComment(child);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

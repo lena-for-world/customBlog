@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import projectBlog.customBlog.Domain.Category;
-import projectBlog.customBlog.Domain.Status;
+import projectBlog.customBlog.domain.Blog;
+import projectBlog.customBlog.domain.Category;
+import projectBlog.customBlog.domain.Status;
 
 @SpringBootTest
 @Transactional
@@ -22,12 +23,15 @@ public class CategoryTest {
     @Autowired EntityManager em;
     Category category;
     String name;
+    Blog blog;
 
     @BeforeEach
     public void before() {
         //given
         name = "카테고리1";
-        category = Category.makeParentCategory(name);
+        blog = new Blog();
+        save(blog);
+        category = Category.makeParentCategory(name, blog);
     }
 
     public void save(Object object) {
@@ -70,7 +74,7 @@ public class CategoryTest {
     @DisplayName("카테고리 전부 조회")
     public void getAllCategories() {
         String name2 = "카테고리2";
-        Category category2 = Category.makeParentCategory(name2);
+        Category category2 = Category.makeParentCategory(name2, blog);
         save(category);
         save(category2);
         List<Category> categories = em.createQuery("select c from Category c", Category.class).getResultList();
@@ -108,7 +112,7 @@ public class CategoryTest {
     public void noParentforParent() {
         // category == 부모 카테고리
         save(category);
-        Category newParent = Category.makeParentCategory("newParent");
+        Category newParent = Category.makeParentCategory("newParent", blog);
         try {
             category.addChildCategory(newParent);
             fail();

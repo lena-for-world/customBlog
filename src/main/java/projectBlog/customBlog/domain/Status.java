@@ -1,4 +1,4 @@
-package projectBlog.customBlog.Domain;
+package projectBlog.customBlog.domain;
 
 public enum Status {
     Parent, Child

@@ -1,4 +1,4 @@
-package projectBlog.customBlog.Domain;
+package projectBlog.customBlog.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +42,11 @@ public class Comment {
         this.status = status;
     }
 
-    public static Comment makeParentComment(String content) {
-        return new Comment(content, Status.Parent);
+    public static Comment makeParentComment(String content, Article article) {
+        Comment comment = new Comment(content, Status.Parent);
+        comment.setCommentArticle(article);
+        article.addCommentToArticle(comment);
+        return comment;
     }
 
     public static Comment makeChildComment(String content) {

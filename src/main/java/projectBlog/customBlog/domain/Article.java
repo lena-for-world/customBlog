@@ -1,4 +1,4 @@
-package projectBlog.customBlog.Domain;
+package projectBlog.customBlog.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,9 +13,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Article {
 
     @Id
@@ -37,16 +39,19 @@ public class Article {
     @OneToMany(mappedBy="article", cascade= CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    private Article(String title, String content, LocalDateTime dateTime, Member member, Category category) {
+    private Article(String title, String content, LocalDateTime dateTime) {
         this.title = title;
         this.content = content;
         this.dateTime = dateTime;
-        this.member = member;
-        this.category = category;
     }
 
+    // 연관관계 메서드
     public static Article makeArticle(String title, String content, LocalDateTime dateTime, Member member, Category category) {
-        return new Article(title, content, dateTime, member, category);
+        Article article = new Article(title, content, dateTime);
+        article.addMember(member);
+        article.addCategory(category);
+        category.addArticle(article);
+        return article;
     }
 
     public int getId() {
@@ -70,7 +75,22 @@ public class Article {
         this.category = category;
     }
 
+    public void deleteComment(Comment comment) {
+        this.getComments().remove(comment);
+        comment.setCommentArticle(null);
+    }
+
+    // 연관관계 메서드
+    public void addMember(Member member) {
+        this.member = member;
+    }
+
+    public void addCategory(Category category) {
+        this.category = category;
+    }
+
     public void addCommentToArticle(Comment comment) {
         comments.add(comment);
     }
+    //
 }

@@ -5,17 +5,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import projectBlog.customBlog.Domain.Article;
-import projectBlog.customBlog.Domain.Blog;
-import projectBlog.customBlog.Domain.Category;
-import projectBlog.customBlog.Domain.Member;
+import projectBlog.customBlog.domain.Article;
+import projectBlog.customBlog.domain.Blog;
+import projectBlog.customBlog.domain.Category;
+import projectBlog.customBlog.domain.Member;
 
 @SpringBootTest
 @Transactional
@@ -24,6 +23,7 @@ public class BlogTest {
     @Autowired
     private EntityManager em;
     Member member1, member2;
+    Blog blog;
 
     public void save(Object object) {
         em.persist(object);
@@ -38,12 +38,11 @@ public class BlogTest {
 
         member1 = Member.makeMember("park0602", "park");
         member2 = Member.makeMember("kimkimkim", "kim");
-
-        member1.getBlog().addMember(member1);
-        member2.getBlog().addMember(member2);
-
+        blog = member1.getBlog();
         save(member1);
         save(member2);
+
+
     }
 
 
@@ -58,7 +57,7 @@ public class BlogTest {
 
         List<Blog> blogs = em.createQuery("select b from Blog b", Blog.class).getResultList();
         for(Blog mm : blogs) {
-            System.out.println(mm.getTitle());
+            System.out.println(mm.getMember().getName());
         }
     }
 
@@ -66,27 +65,51 @@ public class BlogTest {
     @DisplayName("블로그 클릭하면 해당 블로그의 카테고리, 글 등 불러오기")
     public void findCategoriesAndArticles() {
 
-        Category cate = Category.makeParentCategory("category");
-        Article article = Article.makeArticle("제목", "내용", LocalDateTime.now(), member1, cate);
+        Category cate = Category.makeParentCategory("category", blog);
         save(cate);
+        Article article = Article.makeArticle("제목", "내용", LocalDateTime.now(), member1, cate);
+        Article article2 = Article.makeArticle("제목22", "내용22", LocalDateTime.now(), member1, cate);
         save(article);
+        save(article2);
 
         // when
-
-        // blog의 member의 key를 가지고 category를 끌고 오고, article을 끌고 온다
-        // 이건데.. 너무 단순하지 않은 느낌?
-        // blog에 category를 연결시키기? 일단 그렇게 해보겠음...
-        Blog blog = em.find(Blog.class, member1.getBlog().getId());
+        Blog blog = em.find(Blog.class, member1.getBlog().getId()); // 이 부분은 view에서 블로그를 눌렀을 때 controller단으로 블로그 pk를 전송받는 걸로 대체 해야 할 부분
         List<Category> categories = blog.getCategories();
-        assertEquals(categories.size(), 1);
+        for(Category c : categories) {
+            System.out.println("c.getName() = " + c.getName());
+        }
+        assertEquals(categories.size(), 2);
 
         // blog의 memberId로 해당 멤버의 글들을 조회
-        List<Article> articles = em.createQuery("select a from Article a where a.member.id = :member_id", Article.class)
+        List<Article> articles = em.createQuery("select a from Article a where a.member.id = :member_id order by a.id desc", Article.class)
             .setParameter("member_id", blog.getMember().getId())
             .getResultList();
-        assertEquals(articles.size(), 1);
+        assertEquals(articles.size(), 2);
+        for(Article ar : articles) {
+            System.out.println(ar.getContent());
+        }
 
     }
 
+    @Test
+    @DisplayName("각 카테고리를 눌렀을 때 카테고리의 글 가져오기")
+    public void getAllArticlesFromCategory() {
+        // given
+        List<Category> categories = blog.getCategories();
+        Category cate = Category.makeParentCategory("category", blog);
+        Category dflt = categories.get(0);
+        save(cate);
 
+        // when
+        Article article = Article.makeArticle("제목", "내용", LocalDateTime.now(), member1, cate);
+        Article article2 = Article.makeArticle("제목22", "내용22", LocalDateTime.now(), member1, cate);
+        Article article3 = Article.makeArticle("제목22", "내용22", LocalDateTime.now(), member1, dflt);
+        save(article);
+        save(article2);
+        save(article3);
+
+        // then
+        assertEquals(cate.getArticles().size(), 2);
+        assertEquals(dflt.getArticles().size(), 1);
+    }
 }

@@ -1,4 +1,4 @@
-package projectBlog.customBlog.Domain;
+package projectBlog.customBlog.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.Getter;
@@ -32,14 +31,16 @@ public class Blog {
 
     private Blog(String title, String url) {
         this.title = title;
-        this.url = url;
-        this.categories.add(Category.makeParentCategory("default")); // 디폴트 폴더 존재
+        this.url = url; // 디폴트 폴더 존재
     }
 
-    public static Blog makeBlog(String urlId) {
-        String title = urlId + "의 블로그입니다";
-        String url = urlId;
-        return new Blog(title, url);
+    // 연관 관계 메서드 추가
+    public static Blog makeBlog(String urlId, Member member) {
+        Blog blog = new Blog(urlId + "의 블로그입니다", urlId);
+        blog.addMember(member);
+        member.addBlog(blog);
+        Category.makeParentCategory("default", blog);
+        return blog;
     }
 
     public void changeBlogName(String newTitle) {
@@ -50,4 +51,7 @@ public class Blog {
         this.member = member;
     }
 
+    public void addCategory(Category category) {
+        this.categories.add(category);
+    }
 }
