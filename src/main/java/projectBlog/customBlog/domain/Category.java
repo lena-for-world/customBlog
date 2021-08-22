@@ -2,6 +2,7 @@ package projectBlog.customBlog.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -30,7 +31,7 @@ public class Category {
     @JoinColumn(name="parent_id")
     private Category parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> childs = new ArrayList<>();
 
     // category에서 가지고 있는 글들에 접근
@@ -57,9 +58,10 @@ public class Category {
         return new Category(name, Status.Child);
     }
 
+    // 부모 this, 매개변수 자식
     public void addChildCategory(Category category) throws Exception {
         if(this.status == Status.Parent)  {
-            childs.add(category);
+            this.childs.add(category);
             category.setParentCategory(this);
         } else {
             throw new Exception();
@@ -72,6 +74,10 @@ public class Category {
         } else {
             throw new Exception();
         }
+    }
+
+    public void deleteCategory(Category category) {
+        this.getChilds().remove(category);
     }
 
     public void editContent(String changedName) {

@@ -12,7 +12,7 @@ public class BlogRepository {
 
     private final EntityManager em;
 
-    public Blog findBlog(Blog blog) {
-        return em.find(Blog.class, blog.getId());
+    public Blog findBlog(int blogId) {
+        return em.find(Blog.class, blogId);
     }
 }

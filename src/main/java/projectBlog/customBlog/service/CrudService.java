@@ -6,7 +6,7 @@ import projectBlog.customBlog.repository.CrudRepository;
 
 @Service
 @RequiredArgsConstructor
-public class CdService {
+public class CrudService {
 
     private final CrudRepository crudRepository;
 
