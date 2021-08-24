@@ -111,7 +111,7 @@ public class ArticleCrudTest {
     @DisplayName("최신 순 게시글 5개씩 조회")
     public void findFiveArticles() {
         // when ( total 6 articles )
-        Member member2 = Member.makeMember("asdf", "asdfasfd");
+        Member member2 = Member.makeMember("asdf", "1234", "asdfasfd");
         for(int i = 2; i < 7; i++) {
             title = "" + i;
             content = "게시글 " + i;

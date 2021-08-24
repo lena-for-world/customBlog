@@ -53,6 +53,10 @@ public class Comment {
         return new Comment(content, Status.Child);
     }
 
+    public void editContent(String changedContent) {
+        content = changedContent;
+    }
+
     public void addChildComment(Comment comment) throws Exception {
         if(this.status == Status.Parent)  {
             childs.add(comment);
@@ -73,5 +77,10 @@ public class Comment {
     public void setCommentArticle(Article article) {
         this.article = article;
     }
+
+    public void removeConnectionFromParent(Comment comment) {
+        this.getChilds().remove(comment);
+    }
+
 
 }

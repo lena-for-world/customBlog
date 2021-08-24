@@ -16,6 +16,7 @@ import projectBlog.customBlog.domain.Blog;
 import projectBlog.customBlog.domain.Category;
 import projectBlog.customBlog.domain.Comment;
 import projectBlog.customBlog.domain.Member;
+import projectBlog.customBlog.domain.Status;
 
 @DataJpaTest
 @Transactional
@@ -206,10 +207,44 @@ public class CommentTest {
 
     }
 
-    public void deleteComment(Comment comment) {
-        Article article = comment.getArticle();
-        article.getComments().remove(comment);
-        comment.setCommentArticle(null);
+    @Test
+    @DisplayName("부모 댓글 삭제")
+    public void deleteParentComment() {
+
+        // given
+        assertEquals(Status.Parent, comment.getStatus());
+        assertEquals(article.getComments().size(), 1);
+
+        // when
+        comment.getArticle().deleteComment(comment);
+        delete(comment);
+
+        // then
+        assertEquals(article.getComments().size(), 0);
+    }
+
+    @Test
+    @DisplayName("자식 댓글 삭제")
+    public void deleteChildComment() {
+
+        // given
+        assertEquals(comment.getChilds().size(), 0);
+
+        // when
+        Comment child = Comment.makeChildComment("자식 댓글");
+        try {
+            comment.addChildComment(child);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        assertEquals(Status.Child, child.getStatus());
+        assertEquals(article.getComments().size(), 1);
+        assertEquals(comment.getChilds().size(), 1);
+
+        // then
+        child.getParent().removeConnectionFromParent(child);
+        delete(child);
+        assertEquals(comment.getChilds().size(), 0);
     }
 
     @Test
@@ -222,6 +257,22 @@ public class CommentTest {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    @DisplayName("댓글 수정")
+    public void editComment() {
+
+        //given
+        Comment pComment = em.find(Comment.class, comment.getId());
+        String newContent ="바뀐 내용";
+        assertNotEquals(pComment.getContent(), newContent);
+
+        //when
+        pComment.editContent(newContent);
+
+        //then
+        assertEquals(pComment.getContent(), newContent);
     }
 
 }

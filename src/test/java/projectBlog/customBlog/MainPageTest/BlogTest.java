@@ -36,8 +36,8 @@ public class BlogTest {
     @BeforeEach
     public void setUp() {
 
-        member1 = Member.makeMember("park0602", "park");
-        member2 = Member.makeMember("kimkimkim", "kim");
+        member1 = Member.makeMember("park0602","1234", "park");
+        member2 = Member.makeMember("kimkimkim", "1234", "kim");
         blog = member1.getBlog();
         save(member1);
         save(member2);
@@ -66,7 +66,7 @@ public class BlogTest {
 
         Category cate = Category.makeParentCategory("category", blog);
         save(cate);
-        member2 = Member.makeMember("kimkimkim", "kim");
+        member2 = Member.makeMember("kimkimkim", "1234","kim");
         save(member2);
         Article article = Article.makeArticle("제목", "내용", LocalDateTime.now(), member1, cate);
         Article article2 = Article.makeArticle("제목22", "내용22", LocalDateTime.now(), member1, cate);

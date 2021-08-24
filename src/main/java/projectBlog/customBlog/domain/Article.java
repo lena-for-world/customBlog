@@ -54,14 +54,6 @@ public class Article {
         return article;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
     public String getComment() {
         return comments.get(0).getContent();
     }
@@ -77,7 +69,7 @@ public class Article {
 
     public void deleteComment(Comment comment) {
         this.getComments().remove(comment);
-        comment.setCommentArticle(null);
+        //comment.setCommentArticle(null);
     }
 
     // 연관관계 메서드

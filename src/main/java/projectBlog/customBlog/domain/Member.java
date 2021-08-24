@@ -20,19 +20,20 @@ public class Member {
     @Column(name="member_id")
     private int id;
     private String userId;
+    private String password;
     private String name;
 
     @OneToOne(fetch= FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="blog_id")
     private Blog blog;
 
-    private Member(String userId, String name) {
+    private Member(String userId, String password, String name) {
         this.userId = userId;
         this.name = name;
     }
 
-    public static Member makeMember(String userId, String name) {
-       Member member = new Member(userId, name);
+    public static Member makeMember(String userId, String password, String name) {
+       Member member = new Member(userId, password, name);
        Blog.makeBlog(userId, member);
        return member;
     }

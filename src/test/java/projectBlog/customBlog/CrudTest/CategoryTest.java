@@ -1,7 +1,6 @@
 package projectBlog.customBlog.CrudTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
@@ -28,6 +27,7 @@ public class CategoryTest {
     String name;
     Blog blog, blog2;
     Member member1, member2;
+    Article article, article2;
 
     @BeforeEach
     public void before() {
@@ -37,9 +37,9 @@ public class CategoryTest {
 //        save(blog);
 //        blog2 = new Blog();
 //        save(blog2);
-        member1 = Member.makeMember("kimkimkim", "kim");
+        member1 = Member.makeMember("kimkimkim","1234", "kim");
         save(member1);
-        member2 = Member.makeMember("kimkimkim", "kim");
+        member2 = Member.makeMember("kimkimkim", "1234","kim");
         save(member2);
         blog = member1.getBlog();
         blog2 = member2.getBlog();
@@ -49,8 +49,8 @@ public class CategoryTest {
         save(category2);
         category3 = Category.makeParentCategory("카테고리3", blog2);
         save(category3);
-        Article article = Article.makeArticle("제목", "내용", LocalDateTime.now(), member1, category);
-        Article article2 = Article.makeArticle("제목22", "내용22", LocalDateTime.now(), member1, category2);
+        article = Article.makeArticle("제목", "내용", LocalDateTime.now(), member1, category);
+        article2 = Article.makeArticle("제목22", "내용22", LocalDateTime.now(), member1, category2);
         Article article3 = Article.makeArticle("제목3", "내용3", LocalDateTime.now(), member1, category);
         Article article4 = Article.makeArticle("제목4", "내용4", LocalDateTime.now(), member1, category2);
         Article article5 = Article.makeArticle("제목5", "내용5", LocalDateTime.now(), member2, category2);
@@ -120,7 +120,7 @@ public class CategoryTest {
     }
 
     @Test
-    @DisplayName("카테고리 자식 삭제하면 부모 삭제")
+    @DisplayName("카테고리 자식 삭제하면 부모 삭제ㄴㄴ")
     public void removeChildCategory() {
 
         Category newChild = Category.makeChildCategory("newChild");
@@ -232,6 +232,21 @@ public class CategoryTest {
         }
         assertEquals(category.getChilds().get(0), newChild);
         assertEquals(category.getChilds().get(0).getName(), newChild.getName());
+    }
+
+//    Article article = Article.makeArticle("제목", "내용", LocalDateTime.now(), member1, category);
+//    Article article2 = Article.makeArticle("제목22", "내용22", LocalDateTime.now(), member1, category2);
+    @Test
+    @DisplayName("게시글 카테고리 이동")
+    public void moveArticleToAnotherCategory() {
+
+        assertNotEquals(category.getId(), article2.getCategory().getId());
+
+        Category moveCategory = em.find(Category.class, category.getId());
+
+        article2.moveArticleCategory(moveCategory);
+
+        assertEquals(category.getId(), article2.getCategory().getId());
     }
 
 }

@@ -31,9 +31,9 @@ public class CategoryBlogArticleTest {
     @BeforeEach
     public void before() {
         //give
-        member1 = Member.makeMember("kimkimkim", "kim");
+        member1 = Member.makeMember("kimkimkim", "1234","kim");
         crudRepository.save(member1);
-        member2 = Member.makeMember("wtf", "ssikbbang");
+        member2 = Member.makeMember("wtf", "1234","ssikbbang");
         crudRepository.save(member2);
         blog = member1.getBlog();
         blog2 = member2.getBlog();
