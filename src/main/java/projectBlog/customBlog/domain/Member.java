@@ -29,6 +29,7 @@ public class Member {
 
     private Member(String userId, String password, String name) {
         this.userId = userId;
+        this.password = password;
         this.name = name;
     }
 

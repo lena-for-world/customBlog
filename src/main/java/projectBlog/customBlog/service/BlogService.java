@@ -18,13 +18,6 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final ArticleRepository articleRepository;
 
-    // blog에 해당하는 모든 카테고리들을 찾아온다
-    public List<Category> getAllCategoriesOfBlog(int blogId) {
-        return em.createQuery("select c from Category c where c.blog.id = :blog_id")
-            .setParameter("blog_id", blogId)
-            .getResultList();
-    }
-
     // blog의 주인인 member가 가지고 있는 모든 최신글 중 5개만 가져온다
     public List<Article> getRecentFiveArticlesOfBlog(int blogId) {
         Blog blog = blogRepository.findBlog(blogId);

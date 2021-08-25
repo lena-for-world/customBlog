@@ -1,4 +1,4 @@
-package projectBlog.customBlog.MainPageTest;
+package projectBlog.customBlog.mainPageTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -94,7 +94,7 @@ public class BlogTest {
         List<Article> articles = em.createQuery("select a from Article a").getResultList();
         assertEquals(articles.size(), 7);
 
-        // 아래 코드는 페이징이 안 됨
+        // 이 코드는 페이징이 안 됨
 //        List<Article> articles = em.createQuery("select a from Article a where a.member.id = :member_id order by a.id desc", Article.class)
 //            .setParameter("member_id", blog.getMember().getId())
 //            .getResultList();

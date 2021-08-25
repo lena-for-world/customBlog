@@ -31,16 +31,16 @@ public class Category {
     @JoinColumn(name="parent_id")
     private Category parent;
 
+    @ManyToOne
+    @JoinColumn(name="blog_id")
+    private Blog blog;
+
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> childs = new ArrayList<>();
 
     // category에서 가지고 있는 글들에 접근
     @OneToMany(mappedBy = "category")
     private List<Article> articles = new ArrayList<>();
-
-    @ManyToOne
-    @JoinColumn(name="blog_id")
-    private Blog blog;
 
     private Category(String name, Status status) {
         this.name = name;

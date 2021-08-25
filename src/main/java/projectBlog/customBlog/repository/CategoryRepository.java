@@ -23,6 +23,13 @@ public class CategoryRepository {
         return em.createQuery("select c from Category c", Category.class).getResultList();
     }
 
+    // blog에 해당하는 모든 카테고리들을 찾아온다
+    public List<Category> getAllCategoriesOfBlog(int blogId) {
+        return em.createQuery("select c from Category c where c.blog.id = :blog_id")
+            .setParameter("blog_id", blogId)
+            .getResultList();
+    }
+
     // 어떤 카테고리를 누르면 해당 카테고리에 해당하는 글들만 가져온다
     // 최신 순으로 정렬한다
     // 첫 화면에서 5개 글만 가져온다

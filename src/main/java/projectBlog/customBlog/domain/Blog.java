@@ -2,6 +2,7 @@ package projectBlog.customBlog.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +27,7 @@ public class Blog {
     @OneToOne(mappedBy = "blog", fetch= FetchType.LAZY)
     private Member member;
 
-    @OneToMany(mappedBy="blog", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy="blog", cascade = CascadeType.ALL)
     private List<Category> categories = new ArrayList<>();
 
     private Blog(String title, String url) {

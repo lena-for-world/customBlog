@@ -1,11 +1,11 @@
 package projectBlog.customBlog.dto;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class LoginForm {
 
-    private String userid;
+    private String userId;
     private String password;
 
 }

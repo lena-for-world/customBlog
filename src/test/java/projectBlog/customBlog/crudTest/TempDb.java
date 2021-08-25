@@ -1,4 +1,4 @@
-package projectBlog.customBlog.CrudTest;
+package projectBlog.customBlog.crudTest;
 
 import java.util.ArrayList;
 import java.util.List;

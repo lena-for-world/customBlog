@@ -1,8 +1,8 @@
 package projectBlog.customBlog.dto;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class MemberForm {
 
     private String userId;

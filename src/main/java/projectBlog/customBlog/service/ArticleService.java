@@ -20,8 +20,7 @@ public class ArticleService {
         article.editContent(title, content);
     }
 
-    public void saveArticle(int articleId) {
-        Article article = articleRepository.findArticle(articleId);
+    public void saveArticle(Article article) {
         crudRepository.save(article);
     }
 

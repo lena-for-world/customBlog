@@ -1,4 +1,4 @@
-package projectBlog.customBlog.CrudTest;
+package projectBlog.customBlog.crudTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import projectBlog.customBlog.domain.Article;
 import projectBlog.customBlog.domain.Blog;
 import projectBlog.customBlog.domain.Category;
-import projectBlog.customBlog.domain.Comment;
 import projectBlog.customBlog.domain.Member;
 
 @SpringBootTest

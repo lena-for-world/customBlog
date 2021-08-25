@@ -1,7 +1,6 @@
-package projectBlog.customBlog.CrudTest;
+package projectBlog.customBlog.crudTest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;

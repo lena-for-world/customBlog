@@ -21,11 +21,42 @@ public class CategoryService{
     private final CategoryRepository categoryRepository;
 
 
-    // 카테고리 삭제 로직
-    // 받아온 카테고리 id로 카테고리를 찾고, 해당 카테고리가 부모인지 자식인지에 따라 처리한다
-    // 부모 자식에 관계없이 글이 있다면 삭제하지 못한다
-    // 부모일 경우 자식 카테고리가 있다면 삭제하지 못한다
+    /** 카테고리 추가 로직
+     컨트롤러 단에서 생성한 카테고리를 저장한다
+     컨트롤러 단에서 부모, 자식 여부에 따라 카테고리를 생성하기 때문에 저장만 하면 된다
+      -> 카테고리 하단에서 추가 버튼을 눌렀을 때는 무조건 부모 카테고리가 생성되게 한다
+     -> 카테고리의 측면에서 추가 버튼을 눌렀을 때는 무조건 자식 카테고리가 생성되게 한다
+     */
+    public void saveCategory(Category category) {
+        crudRepository.save(category);
+    }
+
+
+    /** 카테고리 이름 수정 */
+    public void updateCategory(int cateId, String cateName) {
+        Category category = categoryRepository.findCategory(cateId);
+        category.editContent(cateName);
+    }
+
+
+    /** 카테고리 이동 -- 자식 카테고리의 부모를 변경 */
+    public void moveCategory(int articleId, int cateId) {
+        Article article = articleRepository.findArticle(articleId);
+        Category moveCategory = categoryRepository.findCategory(cateId);
+        article.moveArticleCategory(moveCategory);
+    }
+
+
+    /** 카테고리 삭제 로직
+     받아온 카테고리 id로 카테고리를 찾고, 해당 카테고리가 부모인지 자식인지에 따라 처리한다
+     부모 자식에 관계없이 글이 있다면 삭제하지 못한다
+     부모일 경우 자식 카테고리가 있다면 삭제하지 못한다
+     */
     public void categoryDelete(int cateId) {
+
+        Category category = categoryRepository.findCategory(cateId);
+        crudRepository.delete(category);
+        /*
         Category category = categoryRepository.findCategory(cateId);
         if(category.getArticles().size() > 0) {
             // 에러 처리! 글이 포함되어 있으므로 삭제할 수 없는 카테고리
@@ -35,29 +66,8 @@ public class CategoryService{
             } else {
                 crudRepository.delete(category);
             }
-        }
-    }
-
-    // 카테고리 추가 로직
-    // 컨트롤러 단에서 생성한 카테고리를 저장한다
-    // 컨트롤러 단에서 부모, 자식 여부에 따라 카테고리를 생성하기 때문에 저장만 하면 된다
-    // -> 카테고리 하단에서 추가 버튼을 눌렀을 때는 무조건 부모 카테고리가 생성되게 한다
-    // -> 카테고리의 측면에서 추가 버튼을 눌렀을 때는 무조건 자식 카테고리가 생성되게 한다
-    public void categorySave(Category category) {
-        crudRepository.save(category);
-    }
-
-    // 카테고리 이름 수정
-    public void updateCategory(int cateId, String cateName) {
-        Category category = categoryRepository.findCategory(cateId);
-        category.editContent(cateName);
-    }
-
-    // 카테고리 이동 -- 자식 카테고리의 부모를 변경
-    public void moveCategory(int articleId, int cateId) {
-        Article article = articleRepository.findArticle(articleId);
-        Category moveCategory = categoryRepository.findCategory(cateId);
-        article.moveArticleCategory(moveCategory);
+        }*/
+        // 컨트롤러 단에서 위의 예외처리를 완료했기 때문에 이렇게만 써도 될 듯 함
     }
 
 }
