@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h2>여긴 블로그 페이지고 글이랑 카테고리를 띄워줄 겁니다...</h2>
+<div>
+  <tr th:each="article : ${articles}">
+    <td th:text="${article.getTitle()}"></td>
+    <br>
+  </tr>
+</div>
+<div>
+  <tr th:each="category : ${categories}">
+    <td th:text="${category.getName()}"></td>
+    <br>
+  </tr>
+</div>
+<div>
+  <tr th:if="${articles.size()==0}">articles가 아직 없어요</tr>
+</div>
+</body>
+</html>

@@ -30,12 +30,12 @@ public class HomeController {
         model.addAttribute("blogs", blogList);
 
         if(session == null) {
-            return "home";
+            return "index";
         }
 
         Member member= (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
         if(member == null) {
-            return "home";
+            return "index";
         }
         model.addAttribute("member", member);
         return "login/loginHome";
