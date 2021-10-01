@@ -4,11 +4,12 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import projectBlog.customBlog.domain.Article;
-import projectBlog.customBlog.domain.Blog;
 import projectBlog.customBlog.domain.Category;
 
 @Repository
+@Transactional
 @RequiredArgsConstructor
 public class CategoryRepository {
 

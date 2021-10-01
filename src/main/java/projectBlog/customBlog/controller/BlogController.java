@@ -2,8 +2,6 @@ package projectBlog.customBlog.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,19 +12,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import projectBlog.customBlog.domain.Article;
-import projectBlog.customBlog.domain.Blog;
 import projectBlog.customBlog.domain.Category;
-import projectBlog.customBlog.domain.Comment;
 import projectBlog.customBlog.domain.Member;
 import projectBlog.customBlog.dto.ArticleForm;
-import projectBlog.customBlog.dto.LoginForm;
-import projectBlog.customBlog.repository.ArticleRepository;
 import projectBlog.customBlog.repository.BlogRepository;
 import projectBlog.customBlog.repository.CategoryRepository;
 import projectBlog.customBlog.service.ArticleService;
 import projectBlog.customBlog.service.BlogService;
 import projectBlog.customBlog.service.CategoryService;
 import projectBlog.customBlog.service.CommentService;
+import projectBlog.customBlog.service.MemberService;
 import projectBlog.customBlog.validation.ArticleValidator;
 import projectBlog.customBlog.validation.CategoryValidator;
 
@@ -35,8 +30,8 @@ import projectBlog.customBlog.validation.CategoryValidator;
 @RequiredArgsConstructor
 public class BlogController {
 
-    private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
     private final CategoryValidator categoryValidator;
     private final BlogService blogService;
     private final BlogRepository blogRepository;
@@ -45,12 +40,14 @@ public class BlogController {
     private final ArticleValidator articleValidator;
 
     @GetMapping("/blog/{blogId}")
-    public String getBlog(@PathVariable("blogId") int blogId, Model model, HttpServletRequest request) {
+    public String getBlog(@PathVariable("blogId") int blogId, Model model) {
         List<Article> articles = blogService.getRecentFiveArticlesOfBlog(blogId);
         List<Category> categories = categoryRepository.getAllCategoriesOfBlog(blogId);
+        Member member = blogRepository.findBlog(blogId).getMember();
         model.addAttribute("articles", articles);
         model.addAttribute("categories", categories);
-        return "blog/blogMain";
+        model.addAttribute("member", member);
+        return "bs_blog/index";
     }
 
 
@@ -75,9 +72,10 @@ public class BlogController {
 
         Member member = blogRepository.findBlog(blogId).getMember();
         Category category = categoryRepository.findCategory(form.getCategoryId());
+        // 생성자 이름이 변경되면 일일이 변경시켜야함
         Article article = Article.makeArticle(form.getTitle(), form.getContent(), LocalDateTime.now(), member, category);
         articleService.saveArticle(article);
-        return "redirect:/"; /** */
+        return "redirect:/blog/{blogId}";
     }
 
     @PostMapping("/comment/parent/{articleId}")

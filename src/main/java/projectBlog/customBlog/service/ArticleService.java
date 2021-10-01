@@ -16,8 +16,7 @@ public class ArticleService {
 
 
     public void editArticle(int articleId, String title, String content) {
-        Article article = articleRepository.findArticle(articleId);
-        article.editContent(title, content);
+        articleRepository.findArticle(articleId).editContent(title, content);
     }
 
     public void saveArticle(Article article) {
@@ -25,8 +24,7 @@ public class ArticleService {
     }
 
     public void deleteArticle(int articleId) {
-        Article article = articleRepository.findArticle(articleId);
-        crudRepository.delete(article);
+        crudRepository.delete(articleRepository.findArticle(articleId));
     }
 
 

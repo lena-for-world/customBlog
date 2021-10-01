@@ -15,7 +15,6 @@ import projectBlog.customBlog.repository.CrudRepository;
 @RequiredArgsConstructor
 public class CategoryService{
 
-    private final EntityManager em;
     private final CrudRepository crudRepository;
     private final ArticleRepository articleRepository;
     private final CategoryRepository categoryRepository;

@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.context.SpringBootTest;
 import projectBlog.customBlog.domain.Article;
 import projectBlog.customBlog.domain.Blog;
 import projectBlog.customBlog.domain.Category;
@@ -18,7 +18,7 @@ import projectBlog.customBlog.domain.Comment;
 import projectBlog.customBlog.domain.Member;
 import projectBlog.customBlog.domain.Status;
 
-@DataJpaTest
+@SpringBootTest
 @Transactional
 public class CommentTest {
 

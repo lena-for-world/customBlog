@@ -26,9 +26,10 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
         Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
-        if(blogId != member.getBlog().getId()) {
+        /*if(blogId != member.getBlog().getId()) {
             log.info("블로그 주인이 아닌 로그인 사용자의 요청");
-            response.sendRedirect("/?redirectURL=" + requestURI); /** */
+            response.sendRedirect("/?redirectURL=" + requestURI);
         }
+        */
     }
 }

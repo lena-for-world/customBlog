@@ -12,7 +12,6 @@ public class CrudService {
 
     public void save(Object object) {
         crudRepository.save(object);
-        System.out.println(object.getClass());
     }
 
 }
