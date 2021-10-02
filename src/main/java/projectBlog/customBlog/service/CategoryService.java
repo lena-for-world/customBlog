@@ -33,6 +33,7 @@ public class CategoryService{
 
     /** 카테고리 이름 수정 */
     public void updateCategory(int cateId, String cateName) {
+        // 이름 중복 체크
         Category category = categoryRepository.findCategory(cateId);
         category.editContent(cateName);
     }
@@ -55,18 +56,7 @@ public class CategoryService{
 
         Category category = categoryRepository.findCategory(cateId);
         crudRepository.delete(category);
-        /*
-        Category category = categoryRepository.findCategory(cateId);
-        if(category.getArticles().size() > 0) {
-            // 에러 처리! 글이 포함되어 있으므로 삭제할 수 없는 카테고리
-        } else {
-            if(category.getStatus() == Status.Parent && category.getChilds().size() > 0) {
-                // 부모 카테고리이고 자식이 있을 경우, 삭제할 수 없음
-            } else {
-                crudRepository.delete(category);
-            }
-        }*/
-        // 컨트롤러 단에서 위의 예외처리를 완료했기 때문에 이렇게만 써도 될 듯 함
+
     }
 
 }

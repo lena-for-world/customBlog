@@ -31,5 +31,7 @@ public class CategoryValidator implements Validator {
             errors.reject("hasContents");
         }
 
+        // 중복되는 이름 있는지 체크
+
     }
 }

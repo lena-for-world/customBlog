@@ -30,9 +30,7 @@ import projectBlog.customBlog.validation.CategoryValidator;
 @RequiredArgsConstructor
 public class BlogController {
 
-    private final CategoryService categoryService;
     private final CategoryRepository categoryRepository;
-    private final CategoryValidator categoryValidator;
     private final BlogService blogService;
     private final BlogRepository blogRepository;
     private final CommentService commentService;
@@ -84,24 +82,6 @@ public class BlogController {
         commentService.postParentComment(articleId, content);
 
         return "redirect:/"; /** */
-    }
-
-
-    @PostMapping("/blog/delete/{blogId}/{categoryId}")
-    public String deleteCategory(@PathVariable("categoryId") int categoryId, BindingResult bindingResult) {
-
-        Category category = categoryRepository.findCategory(categoryId);
-
-        categoryValidator.validate(category, bindingResult);
-
-        if(bindingResult.hasGlobalErrors()) {
-            log.info("{}", bindingResult);
-            return "/blog/{blogId}";
-        }
-
-        categoryService.categoryDelete(categoryId);
-
-        return "/blog/{blogId}";
     }
 
 }
