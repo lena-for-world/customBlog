@@ -30,14 +30,20 @@ public class ArticleRepository {
             .getResultList();
     }
 
-    public List<Article> getPageFiveArticles(Blog blog, int page) {
+    public List<Article> getPageFiveArticles(Blog blog, int startIdx, int pageSize) {
         return em.createQuery("select a from Article a"
             +" join fetch a.member m" +
             " join fetch a.category c" +
             " where a.member.id = :member_id order by a.id desc", Article.class)
             .setParameter("member_id", blog.getMember().getId())
-            .setFirstResult(page)
-            .setMaxResults(5)
+            .setFirstResult(startIdx)
+            .setMaxResults(pageSize)
+            .getResultList();
+    }
+
+    public List<Article> getAllArticles(Blog blog) {
+        return em.createQuery("select a from Article a where a.member.id = :blog_id", Article.class)
+            .setParameter("blog_id", blog.getMember().getId())
             .getResultList();
     }
 

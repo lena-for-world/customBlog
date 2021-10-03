@@ -23,7 +23,6 @@
   <link rel="stylesheet" href="/static/css/bootstrap-datepicker.css">
   <link rel="stylesheet" href="/static/css/jquery.timepicker.css">
 
-
   <link rel="stylesheet" href="/static/css/flaticon.css">
   <link rel="stylesheet" href="/static/css/icomoon.css">
   <link rel="stylesheet" href="/static/css/style.css">
@@ -41,18 +40,29 @@
                 <input type="text" class="form-control" placeholder="Type a keyword and hit enter">
               </div>
             </form>
-          </div>
+          </div>SELECT * FROM CATEGORY
           <div class="sidebar-box ftco-animate">
             <h3 class="sidebar-heading">Categories</h3>
             <ul class="categories" th:each="category : ${categories}">
-              <li><a href="#">Fashion <a class="mt-2 btn btn-white submit" th:href="@{|/blog/edit/${blog.getId()}/${category.getId()}|}">수정</a></a></li>
+              <li>
+                <form th:action="@{|/blog/edit/${blog.getId()}/${category.getId()}|}" th:object="${categoryForm}" method="post">
+                  <input name="name" type="text" th:field="*{name}" th:placeholder="${category.getName()}">
+                  <button class="mt-2 btn btn-white submit" type="submit">수정</button>
+                  </form>
+                <a class="mt-2 btn btn-white submit" th:href="@{|/blog/delete/${blog.getId()}/${category.getId()}|}">삭제</a>
+              </li>
             </ul>
+            <form th:action="@{|/blog/category/add/${blogId}|}" th:object="${categoryForm}" method="post">
+              <input name="name" th:field="*{name}" placeholder="추가할 카테고리 이름">
+              <button className="mt-2 btn btn-white submit" type="submit">카테고리 추가</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </section>
 </div><script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/category-change.js"></script>
 <script src="/static/js/jquery-migrate-3.0.1.min.js"></script>
 <script src="/static/js/popper.min.js"></script>
 <script src="/static/js/bootstrap.min.js"></script>

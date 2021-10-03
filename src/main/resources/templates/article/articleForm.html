@@ -39,8 +39,9 @@
     <div>
       <h2>카테고리 선택</h2>
       <div>
-        <select id="categoryId" th:field="*{categoryId}" th:each="category : ${categories}">
-          <option th:value="${category.getId()}" th:text="${category.getName()}"></option>
+        <select id="categoryId" th:field="*{categoryId}">
+          <option value="선택"> 선택 </option>
+          <option th:each="category : ${categories}" th:value="${category.getId()}" th:text="${category.getName()}"></option>
         </select>
       </div>
     </div>

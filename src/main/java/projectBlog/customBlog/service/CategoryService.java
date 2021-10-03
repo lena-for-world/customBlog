@@ -3,7 +3,9 @@ package projectBlog.customBlog.service;
 import java.util.List;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import projectBlog.customBlog.domain.Article;
 import projectBlog.customBlog.domain.Category;
 import projectBlog.customBlog.domain.Status;
@@ -12,6 +14,8 @@ import projectBlog.customBlog.repository.CategoryRepository;
 import projectBlog.customBlog.repository.CrudRepository;
 
 @Service
+@Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class CategoryService{
 
@@ -35,7 +39,9 @@ public class CategoryService{
     public void updateCategory(int cateId, String cateName) {
         // 이름 중복 체크
         Category category = categoryRepository.findCategory(cateId);
+        log.info(cateName);
         category.editContent(cateName);
+        log.info(category.getName());
     }
 
 

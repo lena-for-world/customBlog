@@ -81,7 +81,7 @@ public class Category {
     }
 
     public void editContent(String changedName) {
-        name = changedName;
+        this.name = changedName;
     }
 
     // 연관관계 메서드

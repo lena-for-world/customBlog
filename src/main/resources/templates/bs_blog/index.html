@@ -35,11 +35,8 @@
 		<aside id="colorlib-aside" role="complementary" class="js-fullheight">
 			<nav id="colorlib-main-menu" role="navigation">
 				<ul>
-					<li class="colorlib-active"><a href="index.html">Home</a></li>
-					<li><a href="fashion.html">Fashion</a></li>
-					<li><a href="travel.html">Travel</a></li>
-					<li><a href="about.html">About</a></li>
-					<li><a href="contact.html">Contact</a></li>
+					<li class="colorlib-active"><a th:href="@{|/blog/${blog.getId()}|}">Home</a></li>
+					<li th:each="category : ${categories}"><a th:href="@{|/blog/${blog.getId()}/category/${category.getId()}|}" th:text="${category.getName()}">Fashion <p th:text="${category.getArticles().size()}">(6)</p></a></li>
 				</ul>
 			</nav>
 
@@ -87,13 +84,14 @@
 			          <div class="col">
 			            <div class="block-27">
 			              <ul>
-			                <li><a href="#">&lt;</a></li>
-			                <li class="active"><span>1</span></li>
-			                <li><a href="#">2</a></li>
-			                <li><a href="#">3</a></li>
-			                <li><a href="#">4</a></li>
-			                <li><a href="#">5</a></li>
-			                <li><a href="#">&gt;</a></li>
+			                <li><a th:href="@{|/blog/${blog.getId()}/?page=${pagination.prevBlock}|}">&lt;</a></li>
+												<th:block th:with="start=${pagination.startPage}, end=${pagination.endPage}">
+													<li th:with="start=${pagination.startPage}, end=${pagination.endPage}"
+															th:each="pageButton : ${#numbers.sequence(start, end)}">
+													<a th:href="@{|/blog/${blog.getId()}/?page=${pageButton}|}" th:text="${pageButton}"></a>
+												</li>
+											</th:block>
+											<li><a th:href="@{|/blog/${blog.getId()}/?page=${pagination.nextBlock}|}">&gt;</a></li>
 			              </ul>
 			            </div>
 			          </div>
@@ -106,8 +104,8 @@
 							<h3 class="mb-4 sidebar-heading">Tools</h3>
 							<p class="mb-4"></p>
 							<div class="subscribe-form form-group">
-								<a class="mt-2 btn btn-white submit" th:href="@{|/blog/write/${member.getBlog().getId()}|}">글쓰기</a>
-								<a class="mt-2 btn btn-white submit" th:href="@{|/blog/setting/${member.getBlog().getId()}|}">설정</a>
+								<a class="mt-2 btn btn-white submit" th:href="@{|/blog/write/${blog.getId()}|}">글쓰기</a>
+								<a class="mt-2 btn btn-white submit" th:href="@{|/blog/setting/${blog.getId()}|}">설정</a>
 							</div>
 						</div>
 	            <div class="sidebar-box pt-md-4">
@@ -120,12 +118,8 @@
 	            </div>
 	            <div class="sidebar-box ftco-animate">
 	            	<h3 class="sidebar-heading">Categories</h3>
-	              <ul class="categories">
-	                <li><a href="#">Fashion <span>(6)</span></a></li>
-	                <li><a href="#">Technology <span>(8)</span></a></li>
-	                <li><a href="#">Travel <span>(2)</span></a></li>
-	                <li><a href="#">Food <span>(2)</span></a></li>
-	                <li><a href="#">Photography <span>(7)</span></a></li>
+	              <ul class="categories" th:each="category : ${categories}">
+	                <li><a th:value="${category.getId()}" th:text="${category.getName()}">Fashion <span th:text="${category.getArticles().size()}">(6)</span></a></li>
 	              </ul>
 	            </div>
 

@@ -32,26 +32,22 @@ public class CategoryRepository {
     }
 
     // 어떤 카테고리를 누르면 해당 카테고리에 해당하는 글들만 가져온다
-    // 최신 순으로 정렬한다
-    // 첫 화면에서 5개 글만 가져온다
-    public List<Article> getRecentFiveArticlesOfCategory(int blogId, int cateId) {
+    public List<Article> getArticlesOfCategory(int blogId, int cateId) {
         return em.createQuery("select a from Article a"
             + " where a.member.blog.id = :blog_id and a.category.id = :category_id")
             .setParameter("blog_id", blogId)
             .setParameter("category_id", cateId)
-            .setFirstResult(0)
-            .setMaxResults(5)
             .getResultList();
     }
 
-    // 위와 동일한 기능에 페이징 추가
-    public List<Article> getPageArticlesOfCategory(int blogId, int cateId, int page) {
+    // 위와 동일한 기능에 페이징, 최신 순으로 정렬 추가
+    public List<Article> getPageArticlesOfCategory(int blogId, int cateId, int startIndex, int pageSize) {
         return em.createQuery("select a from Article a"
-            + " where a.member.blog.id = :blog_id and a.category.id = :category_id")
+            + " where a.member.blog.id = :blog_id and a.category.id = :category_id order by a.id desc")
             .setParameter("blog_id", blogId)
             .setParameter("category_id", cateId)
-            .setFirstResult(page*5)
-            .setMaxResults(5)
+            .setFirstResult(startIndex)
+            .setMaxResults(pageSize)
             .getResultList();
     }
 }

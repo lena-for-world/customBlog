@@ -36,6 +36,10 @@ public class Article {
     @JoinColumn(name="member_id")
     private Member member;
 
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name="blog_id")
+    private Blog blog;
+
     @OneToMany(mappedBy="article", cascade= CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
@@ -46,10 +50,11 @@ public class Article {
     }
 
     // 연관관계 메서드
-    public static Article makeArticle(String title, String content, LocalDateTime dateTime, Member member, Category category) {
+    public static Article makeArticle(String title, String content, LocalDateTime dateTime, Blog blog, Member member, Category category) {
         Article article = new Article(title, content, dateTime);
         article.addMember(member);
         article.addCategory(category);
+        article.addBlog(blog);
         category.addArticle(article);
         return article;
     }
@@ -76,6 +81,8 @@ public class Article {
     public void addMember(Member member) {
         this.member = member;
     }
+
+    public void addBlog(Blog blog) { this.blog = blog; }
 
     public void addCategory(Category category) {
         this.category = category;

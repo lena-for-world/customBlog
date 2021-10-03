@@ -27,9 +27,9 @@ public class BlogService {
 
     // 글 목록 페이징 기능 있는 메서드 -- 메인에서만 사용, 전체글이 5개 단위로 페이징됨
     // 글 제목을 눌렀을 때 그 글로 이동해야 할 것 같아서 글 객체를 일단 다 넘겨주기로 정함
-    public List<Article> getPageArticlesOfBlog(int blogId, int page) {
+    public List<Article> getPageArticlesOfBlog(int blogId, int startIdx, int pageSize) {
         Blog blog = blogRepository.findBlog(blogId);
-        List<Article> articles = articleRepository.getPageFiveArticles(blog, page);
+        List<Article> articles = articleRepository.getPageFiveArticles(blog, startIdx, pageSize);
         return articles;
     }
 
