@@ -2,6 +2,8 @@ package projectBlog.customBlog.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -12,12 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import projectBlog.customBlog.SessionConst;
 import projectBlog.customBlog.domain.Article;
 import projectBlog.customBlog.domain.Blog;
 import projectBlog.customBlog.domain.Category;
 import projectBlog.customBlog.domain.Member;
 import projectBlog.customBlog.domain.Pagination;
 import projectBlog.customBlog.dto.ArticleForm;
+import projectBlog.customBlog.dto.CommentForm;
 import projectBlog.customBlog.repository.ArticleRepository;
 import projectBlog.customBlog.repository.BlogRepository;
 import projectBlog.customBlog.repository.CategoryRepository;
@@ -72,6 +76,18 @@ public class BlogController {
         return "article/articleForm";
     }
 
+    @GetMapping("/blog/{blogId}/article")
+    public String getArticle(@PathVariable("blogId") int blogId, @ModelAttribute("commentForm") CommentForm commentForm, @RequestParam(defaultValue = "1") int articleId, Model model) {
+
+        Blog blog = blogRepository.findBlog(blogId);
+        Article article = articleRepository.findArticle(articleId);
+
+        model.addAttribute("blog", blog);
+        model.addAttribute("article", article);
+
+        return "bs_blog/single";
+    }
+
 
     @PostMapping("/blog/write/{blogId}")
     public String postArticle(@PathVariable("blogId") int blogId, @ModelAttribute("articleForm") ArticleForm form, BindingResult bindingResult) {
@@ -86,18 +102,19 @@ public class BlogController {
         Blog blog = blogRepository.findBlog(blogId);
         Member member = blog.getMember();
         Category category = categoryRepository.findCategory(form.getCategoryId());
-        // 생성자 이름이 변경되면 일일이 변경시켜야함
         Article article = Article.makeArticle(form.getTitle(), form.getContent(), LocalDateTime.now(), blog, member, category);
         articleService.saveArticle(article);
         return "redirect:/blog/{blogId}";
     }
 
-    @PostMapping("/comment/parent/{articleId}")
-    public String postComment(@PathVariable("articleId") int articleId, String content) {
+    @PostMapping("/comment/{blogId}/parent/{articleId}")
+    public String postParentComment(@PathVariable("blogId") int blogId, @PathVariable("articleId") int articleId, @ModelAttribute("commentForm") CommentForm commentForm, HttpServletRequest request) {
 
-        commentService.postParentComment(articleId, content);
-
-        return "redirect:/"; /** */
+        HttpSession session = request.getSession(false);
+        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
+        String content = commentForm.getContent();
+        commentService.postParentComment(articleId, content, member.getId());
+        return "redirect:/blog/{blogId}"; /** */
     }
 
     @GetMapping("/blog/{blogId}/category/{categoryId}")

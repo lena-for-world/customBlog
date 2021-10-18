@@ -30,6 +30,10 @@ public class Comment {
     @JoinColumn(name="article_id")
     private Article article;
 
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "parent")
     private List<Comment> childs = new ArrayList<>();
 
@@ -42,10 +46,12 @@ public class Comment {
         this.status = status;
     }
 
-    public static Comment makeParentComment(String content, Article article) {
+    public static Comment makeParentComment(String content, Article article, Member member) {
         Comment comment = new Comment(content, Status.Parent);
         comment.setCommentArticle(article);
         article.addCommentToArticle(comment);
+        comment.setMember(member);
+        member.addComment(comment);
         return comment;
     }
 
@@ -82,5 +88,8 @@ public class Comment {
         this.getChilds().remove(comment);
     }
 
+    public void setMember(Member member) {
+        this.member = member;
+    }
 
 }

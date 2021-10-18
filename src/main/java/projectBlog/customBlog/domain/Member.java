@@ -1,5 +1,7 @@
 package projectBlog.customBlog.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +30,9 @@ public class Member {
     @JoinColumn(name="blog_id")
     private Blog blog;
 
+    @OneToMany(mappedBy = "member")
+    private List<Comment> comments = new ArrayList<>();
+
     private Member(String userId, String password, String name) {
         this.userId = userId;
         this.password = password;
@@ -44,4 +50,7 @@ public class Member {
         this.blog = blog;
     }
 
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+    }
 }

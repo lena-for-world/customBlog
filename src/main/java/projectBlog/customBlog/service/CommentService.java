@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import projectBlog.customBlog.domain.Article;
 import projectBlog.customBlog.domain.Comment;
+import projectBlog.customBlog.domain.Member;
 import projectBlog.customBlog.domain.Status;
 import projectBlog.customBlog.repository.ArticleRepository;
 import projectBlog.customBlog.repository.CommentRepository;
@@ -16,6 +17,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
     private final CrudRepository crudRepository;
+    private final MemberService memberService;
 
    public void postChildComment(int parentId, String content) {
         Comment parent = commentRepository.findComment(parentId);
@@ -27,9 +29,10 @@ public class CommentService {
         }
     }
 
-    public void postParentComment(int articleId, String content) {
+    public void postParentComment(int articleId, String content, int memberId) {
         Article article = articleRepository.findArticle(articleId);
-        Comment comment = Comment.makeParentComment(content, article);
+        Member member = memberService.getMember(memberId);
+        Comment comment = Comment.makeParentComment(content, article, member);
         crudRepository.save(comment);
     }
 

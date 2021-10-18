@@ -47,13 +47,14 @@ public class LoginController {
         }
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, member);
+        Member m = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);
 
         redirectURL = "/blog/"+member.getBlog().getId();
         return "redirect:" + redirectURL;
     }
 
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
